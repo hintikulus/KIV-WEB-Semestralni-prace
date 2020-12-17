@@ -6,21 +6,23 @@
 //// Pripojeni k databazi ////
 
 /** Adresa serveru. */
-define("DB_SERVER","10.0.0.5"); // https://students.kiv.zcu.cz lze 147.228.63.10, ale musite byt na VPN
+define("DB_SERVER","vpn.hintik.cz"); // https://students.kiv.zcu.cz lze 147.228.63.10, ale musite byt na VPN
 /** Nazev databaze. */
 define("DB_NAME","KIVWEB");
 /** Uzivatel databaze. */
 define("DB_USER","web");
 /** Heslo uzivatele databaze */
-define("DB_PASS","");
+define("DB_PASS","kivwebheslo");
 
 
 //// Nazvy tabulek v DB ////
 
 /** Tabulka s pohadkami. */
-define("TABLE_INTRODUCTION", "orionlogin_mvc_introduction");
+define("TABLE_USERS", "users");
 /** Tabulka s uzivateli. */
-define("TABLE_USER", "orionlogin_mvc_user");
+define("TABLE_ROLES", "roles");
+
+define("TABLE_ARTICLES", "articles");
 
 //// Informace o webu ////
 define("WEB_TITLE", "Konference TechMasters");
@@ -61,17 +63,17 @@ const WEB_PAGES = array(//// Uvodni stranka ////
         "title" => "Správa uživatelů",
 
         //// kontroler
-        //"file_name" => "UserManagementController.class.php",
-        "controller_class_name" => \konference\Controllers\UserManagementController::class,
-
-        // ClassBased sablona
-        //"view_class_name" => \kivweb\Views\ClassBased\UserManagementTemplate::class,
+        "controller_class_name" => \konference\Controllers\AdminUserManagementController::class,
 
         // TemplateBased sablona
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_MANAGEMENT,
+        "view_class_name" => \konference\Views\TemplateAdministration\TemplateAdministration::class,
+        "template_type" => \konference\Views\TemplateAdministration\TemplateAdministration::PAGE_ADMIN_USER_MANAGEMENT,
     ),
     //// KONEC: Sprava uzivatelu ////
+
+    "information" => array(
+        "title" => "Informace",
+    ),
 
     "administrace" => array(
         "title" => "Administrace",
@@ -101,7 +103,10 @@ const WEB_PAGES = array(//// Uvodni stranka ////
     ),
 
     "login" => array(
-        "title" => "Přihlášení uživatele"
+        "title" => "Přihlášení uživatele",
+        "controller_class_name" => \konference\Controllers\UserLoginController::class,
+        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
+        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_LOGIN
 
     )
 

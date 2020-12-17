@@ -30,7 +30,7 @@ global $tplData;
 
 ?>
 <!-- ------------------------------------------------------------------------------------------------------- -->
-<div class="alert-info">TemplateBased</div>
+<div class="alert-info">TemplateAdmin</div>
 
 <!-- Vypis obsahu sablony -->
 <?php
@@ -45,7 +45,7 @@ if(isset($tplData['delete'])){
     echo "<div class='alert'>$tplData[delete]</div>";
 }
 
-$res = "<table border><tr><th>ID</th><th>Jméno</th><th>Příjmení</th><th>Login</th><th>E-mail</th><th>Web</th><th>Akce</th></tr>";
+$res = "<div class='table-responsive-md'><table class='table table-hover'><tr><th>ID</th><th>Jméno</th><th>Příjmení</th><th>Login</th><th>E-mail</th><th>Web</th><th>Akce</th></tr>";
 // projdu data a vypisu radky tabulky
 foreach($tplData['users'] as $u){
     $res .= "<tr><td>$u[id_user]</td><td>$u[first_name]</td><td>$u[last_name]</td><td>$u[login]</td><td>$u[email]</td><td>$u[web]</td>"
@@ -55,7 +55,7 @@ foreach($tplData['users'] as $u){
             ."</form></td></tr>";
 }
 
-$res .= "</table>";
+$res .= "</table></div></div>";
 echo $res;
 
 ?>

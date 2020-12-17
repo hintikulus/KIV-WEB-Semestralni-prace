@@ -13,15 +13,12 @@ class TemplateBasics implements IView {
     /** @var string PAGE_INTRODUCTION  Sablona s uvodni strankou. */
     const PAGE_INTRODUCTION = "IntroductionTemplate.tpl.php";
     /** @var string PAGE_USER_MANAGEMENT  Sablona se spravou uzivatelu. */
-    const PAGE_USER_MANAGEMENT = "UserManagementTemplate.tpl.php";
-
-    const PAGE_ADMIN_USER_LIST = "AdminUserListTemplate.tpl.php";
 
     const PAGE_ARTICLE_CREATE = "AdminUserListTemplate.tpl.php";
 
     const PAGE_USER_REGISTRATION = "UserRegistrationTemplate.tpl.php";
 
-    const PAGE_USER_LOGIN = "UserRegistrationTemplate.tpl.php";
+    const PAGE_USER_LOGIN = "UserLoginTemplate.tpl.php";
 
 
 
@@ -69,21 +66,23 @@ class TemplateBasics implements IView {
                 <header>
                     <nav class="navbar navbar-expand-lg navbar-light bg-light">
                         <div class="container-fluid">
-                            <a class="navbar-brand text-dark" href="#"><h1 class="h5"><?= WEB_TITLE; ?></h1></a>
+                            <a class="navbar-brand text-dark" href="index.php?page=uvod"><h1 class="h5"><?= WEB_TITLE; ?></h1></a>
                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Otevřít navigaci">
                                 <span class="navbar-toggler-icon"></span>
                             </button>
                             <div class="collapse navbar-collapse" id="navbarToggle">
                                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                    <?php
-                                    foreach (WEB_PAGES as $key => $pInfo) {
-                                        echo '<li class="nav-item"><a class="nav-link active text-dark" href="index.php?page='.$key.'">'.$pInfo['title'].'</a></li>';
-                                    }
-                                    ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link active text-dark" href="index.php?page=uvod"><?= WEB_PAGES['uvod']['title']; ?></a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link active text-dark" href="index.php?page=information"><?= WEB_PAGES['information']['title']; ?></a>
+                                    </li>
                                 </ul>
                                 <div class="d-flex">
-                                    <a class="btn btn-outline-primary me-2" href="#">Přihlášení</a>
-                                    <a class="btn btn-outline-danger" href="#">Registrace</a>
+                                    <a class="btn btn-outline-primary me-2" href="?page=login">Přihlášení</a>
+                                    <a class="btn btn-outline-danger" href="?page=registration">Registrace</a>
                                 </div>
                             </div>
                         </div>
