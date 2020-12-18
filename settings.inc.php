@@ -31,11 +31,11 @@ define("WEB_TITLE", "Konference TechMasters");
 //// Dostupne stranky webu ////
 
 /** Adresar kontroleru. */
-//const DIRECTORY_CONTROLLERS = "Controllers";
+const DIRECTORY_CONTROLLERS = "../app/Controllers";
 /** Adresar modelu. */
-//const DIRECTORY_MODELS = "Models";
+const DIRECTORY_MODELS = "../app/Models";
 /** Adresar sablon */
-//const DIRECTORY_VIEWS = "Views";
+const DIRECTORY_VIEWS = "../app/Views";
 
 /** Klic defaultni webove stranky. */
 const DEFAULT_WEB_PAGE_KEY = "uvod";

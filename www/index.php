@@ -1,4 +1,7 @@
 <?php
+
+use konference\ApplicationStart;
+
 // vynuceni chybovych vypisu na serveru (napr. na students.kiv.zcu.cz)
  ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
 
@@ -10,7 +13,7 @@ require_once("../myAutoloader.inc.php");
 require_once("../settings.inc.php");
 
 // spustim aplikaci
-$app = new \konference\ApplicationStart();
+$app = new ApplicationStart();
 $app->appStart();
 
 ?>

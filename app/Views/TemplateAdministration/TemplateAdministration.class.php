@@ -21,7 +21,7 @@ class TemplateAdministration extends TemplateBasics implements IView {
     public function printOutput(array $templateData, string $pageType = self::PAGE_INTRODUCTION)
     {
         //// vypis hlavicky
-        $this->getHTMLHeader($templateData['title']);
+        $this->getHTMLHeader($templateData);
 
         //// vypis sablony obsahu
         // data pro sablonu nastavim globalni
@@ -39,14 +39,17 @@ class TemplateAdministration extends TemplateBasics implements IView {
      *  Vrati vrsek stranky az po oblast, ve ktere se vypisuje obsah stranky.
      *  @param string $pageTitle    Nazev stranky.
      */
-    public function getHTMLHeader(string $pageTitle) {
-        parent::getHTMLHeader($pageTitle);
+    public function getHTMLHeader(array $tplData) {
+        parent::getHTMLHeader($tplData);
         ?>
             <div class="row mt-4">
-                <div class="col-md-2">
-                    <h3>Administrace</h3>
+                <div class="col-md-3 col-lg-2">
+                    <h4 class="h4">Administrace</h4>
                     <nav class="">
                         <ul class="nav nav-pills flex-column">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">Vytvořit příspěvek</a>
+                            </li>
                             <li class="nav-item active">
                                 <a class="nav-link" href="#">Seznam mých článků</a>
                             </li>
@@ -61,8 +64,8 @@ class TemplateAdministration extends TemplateBasics implements IView {
                         </ul>
                     </nav>
                 </div>
-                <div class="col-md-10">
-                    <h4><?= $pageTitle; ?></h4>
+                <div class="col-md-9 col-lg-10">
+                    <h5 class="h5"><?= $tplData['title']; ?></h5>
         <?php
     }
 

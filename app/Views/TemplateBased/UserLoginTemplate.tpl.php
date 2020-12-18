@@ -27,7 +27,7 @@ if(isset($tplData['errors'])) {
                         <input type="password" class="form-control" id="loginPassWord" name="loginPassWord" placeholder="Heslo">
                     </div>
                     <div class="form-group">
-                        <input type="submit" class="btn btn-outline-primary justify-content-end" value="Přihlášení">
+                        <input type="submit" class="btn btn-outline-primary justify-content-end" value="Přihlášení" name="loginSubmit">
                     </div>
 
                 </div>

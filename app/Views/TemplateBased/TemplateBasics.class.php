@@ -30,7 +30,7 @@ class TemplateBasics implements IView {
     public function printOutput(array $templateData, string $pageType = self::PAGE_INTRODUCTION)
     {
         //// vypis hlavicky
-        $this->getHTMLHeader($templateData['title']);
+        $this->getHTMLHeader($templateData);
 
         //// vypis sablony obsahu
         // data pro sablonu nastavim globalni
@@ -48,7 +48,7 @@ class TemplateBasics implements IView {
      *  Vrati vrsek stranky az po oblast, ve ktere se vypisuje obsah stranky.
      *  @param string $pageTitle    Nazev stranky.
      */
-    public function getHTMLHeader(string $pageTitle) {
+    public function getHTMLHeader(array $tplData) {
         ?>
 
         <!doctype html>
@@ -80,10 +80,32 @@ class TemplateBasics implements IView {
                                         <a class="nav-link active text-dark" href="index.php?page=information"><?= WEB_PAGES['information']['title']; ?></a>
                                     </li>
                                 </ul>
-                                <div class="d-flex">
-                                    <a class="btn btn-outline-primary me-2" href="?page=login">Přihlášení</a>
-                                    <a class="btn btn-outline-danger" href="?page=registration">Registrace</a>
-                                </div>
+                                <?php
+                                if(isset($tplData['logged'])) {
+                                ?>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Přihlášený uživatel <?= $tplData['logged'] ?>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li><a class="dropdown-item" href="#">Můj profil</a></li>
+                                            <li><a class="dropdown-item" href="#">Moje příspěvky</a></li>
+                                            <li><a class="dropdown-item" href="#">Nový příspěvek</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item" href="?page=login&action=logout">Odhlásit se</a></li>
+                                        </ul>
+                                    </div>
+
+                                <?php
+                                } else {
+                                ?>
+                                    <div class="d-flex">
+                                        <a class="btn btn-outline-primary me-2" href="?page=login">Přihlášení</a>
+                                        <a class="btn btn-outline-danger" href="?page=registration">Registrace</a>
+                                    </div>
+                                <?php
+                                }
+                                ?>
                             </div>
                         </div>
                     </nav>
@@ -101,9 +123,11 @@ class TemplateBasics implements IView {
                 </main>
                 <footer>Cvičení z KIV/WEB</footer>
 
+                <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.js"></script>
                 <script src="../vendor/components/jquery/jquery.min.js"></script>
                 <script src="../vendor/alexandermatveev/popper-bundle/AlexanderMatveev/PopperBundle/Resources/public/popper.min.js"></script>
-                <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+
+
             </body>
         </html>
 

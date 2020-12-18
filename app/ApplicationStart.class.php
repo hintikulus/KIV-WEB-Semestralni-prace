@@ -3,6 +3,7 @@
 namespace konference;
 
 use konference\Controllers\IController;
+use konference\Models\UserLoginModel;
 use konference\Views\IView;
 
 /**

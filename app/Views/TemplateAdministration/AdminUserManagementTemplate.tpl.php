@@ -48,7 +48,7 @@ if(isset($tplData['delete'])){
 $res = "<div class='table-responsive-md'><table class='table table-hover'><tr><th>ID</th><th>Jméno</th><th>Příjmení</th><th>Login</th><th>E-mail</th><th>Web</th><th>Akce</th></tr>";
 // projdu data a vypisu radky tabulky
 foreach($tplData['users'] as $u){
-    $res .= "<tr><td>$u[id_user]</td><td>$u[first_name]</td><td>$u[last_name]</td><td>$u[login]</td><td>$u[email]</td><td>$u[web]</td>"
+    $res .= "<tr><td>$u[id_user]</td><td>$u[name]</td><td>$u[surname]</td><td>$u[login]</td><td>$u[email]</td><td>$u[id_role]</td>"
             ."<td><form method='post'>"
             ."<input type='hidden' name='id_user' value='$u[id_user]'>"
             ."<button type='submit' name='action' value='delete'>Smazat</button>"

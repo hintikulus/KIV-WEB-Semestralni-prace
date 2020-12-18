@@ -86,6 +86,18 @@ class DatabaseModel {
         return $this->pdo->query($q)->fetchAll();
     }
 
+    public function loginUser(string $login, string $password):bool {
+        $login = htmlspecialchars($login);
+
+        $q = "SELECT password from " . TABLE_USERS . " WHERE login = :login;";
+        $vystup = $this->pdo->prepare($q);
+        $vystup->bindParam(':login', $login);
+        $vystup->execute();
+        $result = $vystup->fetchAll()[0]['password'];
+
+        return password_verify($password, $result);
+    }
+
     public function createUser(string $login, string $email, string $password, string $name, string $surname) {
         $login = htmlspecialchars($login);
         $email = htmlspecialchars($email);

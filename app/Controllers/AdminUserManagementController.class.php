@@ -13,7 +13,7 @@ use konference\Models\DatabaseModel as MyDB;
  * Ovladac zajistujici vypsani stranky se spravou uzivatelu.
  * @package kivweb\Controllers
  */
-class AdminUserManagementController implements IController {
+class AdminUserManagementController extends PageController {
 
     /** @var MyDB $db  Sprava databaze. */
     private $db;
@@ -22,6 +22,7 @@ class AdminUserManagementController implements IController {
      * Inicializace pripojeni k databazi.
      */
     public function __construct() {
+        parent::__construct();
         // inicializace prace s DB
         //require_once (DIRECTORY_MODELS ."/DatabaseModel.class.php");
         $this->db = MyDB::getDatabaseModel();
@@ -33,10 +34,7 @@ class AdminUserManagementController implements IController {
      * @return array                Vytvorena data pro sablonu.
      */
     public function show(string $pageTitle):array {
-        //// vsechna data sablony budou globalni
-        $tplData = [];
-        // nazev
-        $tplData['title'] = $pageTitle;
+        $tplData = parent::show($pageTitle);
 
         //// neprisel pozadavek na smazani uzivatele?
         if(isset($_POST['action']) and $_POST['action'] == "delete"
