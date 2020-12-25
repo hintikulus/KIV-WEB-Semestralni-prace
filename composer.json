@@ -1,10 +1,11 @@
 {
     "description": "Semestralka z KIV/WEB",
     "require": {
-        "components/jquery": ">=3.0",
-        "components/font-awesome": "4.7.0",
-        "twbs/bootstrap": ">=5.0.0-beta1",
         "alexandermatveev/popper-bundle": ">=1.0",
+        "ckeditor/ckeditor": "^4.15",
+        "components/font-awesome": "4.7.0",
+        "components/jquery": ">=3.0",
+        "twbs/bootstrap": ">=5.0.0-beta1",
         "twig/twig": ">= 1.0"
     },
     "config": {

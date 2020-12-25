@@ -5,6 +5,7 @@ namespace konference\Controllers;
 
 
 use konference\Models\DatabaseModel;
+use konference\Models\Utilities;
 
 class UserRegistrationController extends PageController {
 
@@ -26,33 +27,59 @@ class UserRegistrationController extends PageController {
 
         if($this->login->isUserLogged()) {
             header('Location: ?page=uvod');
-            return;
+            return [];
         }
 
         if(isset($_POST['registrationSubmit'])) {
-            if(DatabaseModel::isset($_POST, 'registrationName', 'registrationSurName', 'registrationEMail', 'registrationUserName',
-                'registrationPassWord', 'registrationPassWord2') && isset($_POST['registrationSouhlas'])) {
+            $errors = $this->isRegistrationDataOk($_POST);
 
-                if($_POST['registrationPassWord'] == $_POST['registrationPassWord2']) {
-                    $password = password_hash($_POST['registrationPassWord'], PASSWORD_BCRYPT);
+            if(isset($errors['success'])) {
+                $password = password_hash($_POST['registrationPassWord'], PASSWORD_BCRYPT);
 
-                    $errors = $this->db->createUser($_POST['registrationUserName'], $_POST['registrationEMail'],
-                        $password, $_POST['registrationName'], $_POST['registrationSurName']);
+                $errors = $this->db->createUser($_POST['registrationUserName'], $_POST['registrationEMail'],
+                    $password, $_POST['registrationName'], $_POST['registrationSurName']);
 
-                    if(isset($errors['success'])) {
-                        $username = htmlspecialchars($_POST['registrationUserName']);
-                        $this->login->login($username);
-                        $tplData['logged'] = $username;
-                        header('Location: ?page=uvod');
-                    }
-
-                    foreach($errors as $error) echo $error . '<br>';
+                if(isset($errors['success'])) {
+                    $username = htmlspecialchars($_POST['registrationUserName']);
+                    $this->login->login($username);
+                    $tplData['logged'] = $username;
+                    header('Location: ?page=uvod');
                 }
-
             }
+
+            $tplData['errors'] = $errors;
         }
 
         return $tplData;
+
+    }
+
+    private function isRegistrationDataOk(array $data):array {
+        $result = [];
+        $isOk = true;
+
+        if(!(DatabaseModel::isset($data, 'registrationName', 'registrationSurName', 'registrationEMail', 'registrationUserName',
+                'registrationPassWord', 'registrationPassWord2') && isset($data['registrationSouhlas']))) {
+
+            $result['errors']['empty'] = "Nejsou vyplněna veškeré políčka";
+            return $result;
+        }
+
+        if($data['registrationPassWord'] != $data['registrationPassWord2']) {
+            $result['errors']['passWordEqual'] == "Hesla se neshodují";
+            $isOk = false;
+        }
+
+        if(Utilities::passWordValidation($data['registrationPassWord'])) {
+            $result['errors']['passWordStrength'] == "Heslo není dostatečně silné";
+            $isOk = false;
+        }
+
+        if($isOk) {
+            $result['success'] = "Registrace je v pořádku";
+        }
+
+        return $result;
 
     }
 }

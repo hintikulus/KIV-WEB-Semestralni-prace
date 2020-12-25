@@ -40,6 +40,8 @@ const DIRECTORY_VIEWS = "../app/Views";
 /** Klic defaultni webove stranky. */
 const DEFAULT_WEB_PAGE_KEY = "uvod";
 
+const ERROR_404_PAGE_KEY = "404";
+
 /** Dostupne webove stranky. */
 const WEB_PAGES = array(//// Uvodni stranka ////
     "uvod" => array(
@@ -73,20 +75,28 @@ const WEB_PAGES = array(//// Uvodni stranka ////
 
     "information" => array(
         "title" => "Informace",
+        "controller_class_name" => \konference\Controllers\PageController::class,
+        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
+        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_INFORMATION,
     ),
 
     "administrace" => array(
         "title" => "Administrace",
     ),
 
-    "articleshow" => array(
-        "title" => "Zobrazení příspěvků"
+    "post" => array(
+        "title" => "Publikování článku",
+        "controller_class_name" => \konference\Controllers\ArticlePostController::class,
+        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
+        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_ARTICLE_POST,
 
     ),
 
-    "articleedit" => array(
-        "title" => "Úprava příspěvků"
-
+    "article" => array(
+        "title" => "Zobrazení článku",
+        "controller_class_name" => \konference\Controllers\ArticleShowController::class,
+        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
+        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_ARTICLE_SHOW,
     ),
 
     "articlecreate" => array(
@@ -106,8 +116,28 @@ const WEB_PAGES = array(//// Uvodni stranka ////
         "title" => "Přihlášení uživatele",
         "controller_class_name" => \konference\Controllers\UserLoginController::class,
         "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_LOGIN
+        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_LOGIN,
+    ),
 
+    "useredit" => array(
+        "title" => "Úprava profilu",
+        "controller_class_name" => \konference\Controllers\UserEditController::class,
+        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
+        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_EDIT,
+    ),
+
+    "profile" => array(
+        "title" => "Profil uživatele",
+        "controller_class_name" => \konference\Controllers\UserProfileController::class,
+        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
+        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_PROFILE,
+    ),
+
+    "404" => array(
+        "title" => "Error 404",
+        "controller_class_name" => \konference\Controllers\PageController::class,
+        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
+        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_ERROR_404
     )
 
 

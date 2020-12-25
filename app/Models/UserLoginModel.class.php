@@ -8,6 +8,7 @@ class UserLoginModel {
 
     private $ses;
 
+    private $dUserId = "id";
     private $dUserName = "username";
     private $dDate = "datum";
 
@@ -20,9 +21,16 @@ class UserLoginModel {
         return $this->ses->isSessionSet($this->dUserName);
     }
 
-    public function login($userName) {
+    public function login($userId, $userName) {
+        $this->ses->addSession($this->dUserId, $userId);
         $this->ses->addSession($this->dUserName, $userName);
         $this->ses->addSession($this->dDate, date("d. m. Y, G:m:s"));
+    }
+
+    public function getUserId():int {
+        if($this->isUserLogged()) {
+            return (int) $this->ses->readSession($this->dUserId);
+        }
     }
 
     public function getUserName() {

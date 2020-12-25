@@ -13,13 +13,18 @@ class TemplateBasics implements IView {
     /** @var string PAGE_INTRODUCTION  Sablona s uvodni strankou. */
     const PAGE_INTRODUCTION = "IntroductionTemplate.tpl.php";
     /** @var string PAGE_USER_MANAGEMENT  Sablona se spravou uzivatelu. */
-
-    const PAGE_ARTICLE_CREATE = "AdminUserListTemplate.tpl.php";
+    const PAGE_INFORMATION = "InformationTemplate.tpl.php";
 
     const PAGE_USER_REGISTRATION = "UserRegistrationTemplate.tpl.php";
-
     const PAGE_USER_LOGIN = "UserLoginTemplate.tpl.php";
 
+    const PAGE_USER_PROFILE = "UserProfileTemplate.tpl.php";
+    const PAGE_USER_EDIT = "UserEditTemplate.tpl.php";
+
+    const PAGE_ARTICLE_POST = "ArticlePostTemplate.tpl.php";
+    const PAGE_ARTICLE_SHOW = "ArticleShowTemplate.tpl.php";
+
+    const PAGE_ERROR_404 = "404.tpl.php";
 
 
     /**
@@ -64,7 +69,7 @@ class TemplateBasics implements IView {
             </head>
             <body>
                 <header>
-                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
                         <div class="container-fluid">
                             <a class="navbar-brand text-dark" href="index.php?page=uvod"><h1 class="h5"><?= WEB_TITLE; ?></h1></a>
                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Otevřít navigaci">
@@ -73,7 +78,7 @@ class TemplateBasics implements IView {
                             <div class="collapse navbar-collapse" id="navbarToggle">
                                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                     <li class="nav-item">
-                                        <a class="nav-link active text-dark" href="index.php?page=uvod"><?= WEB_PAGES['uvod']['title']; ?></a>
+                                        <a class="nav-link active text-dark" href="index.php?page=uvod"><?= WEB_PAGES['uvod']['title']; ?> <span class="badge bg-danger">Připravuje se</span></a>
                                     </li>
 
                                     <li class="nav-item">
@@ -85,12 +90,13 @@ class TemplateBasics implements IView {
                                 ?>
                                     <div class="dropdown">
                                         <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Přihlášený uživatel <?= $tplData['logged'] ?>
+                                            Přihlášený uživatel: <?= $tplData['logged'] ?>
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li><a class="dropdown-item" href="#">Můj profil</a></li>
-                                            <li><a class="dropdown-item" href="#">Moje příspěvky</a></li>
-                                            <li><a class="dropdown-item" href="#">Nový příspěvek</a></li>
+                                            <li><a class="dropdown-item" href="?page=profile&user=<?= $tplData['logged']; ?>">Můj profil <span class="badge bg-danger">Připravuje se</span></h4></a></li>
+                                            <li><a class="dropdown-item" href="#">Moje příspěvky <span class="badge bg-danger">Připravuje se</span></a></li>
+                                            <li><a class="dropdown-item" href="?page=post">Nový příspěvek <span class="badge bg-danger">Připravuje se</span></a></li>
+                                            <li><a class="dropdown-item" href="?page=useredit">Upravit profil</a></li>
                                             <li><hr class="dropdown-divider"></li>
                                             <li><a class="dropdown-item" href="?page=login&action=logout">Odhlásit se</a></li>
                                         </ul>
@@ -110,7 +116,7 @@ class TemplateBasics implements IView {
                         </div>
                     </nav>
                 </header>
-                <main class="container">
+                <main class="container pt-4">
         <?php
     }
     
@@ -126,8 +132,11 @@ class TemplateBasics implements IView {
                 <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.js"></script>
                 <script src="../vendor/components/jquery/jquery.min.js"></script>
                 <script src="../vendor/alexandermatveev/popper-bundle/AlexanderMatveev/PopperBundle/Resources/public/popper.min.js"></script>
+                <script src="../vendor/ckeditor/ckeditor/ckeditor.js"></script>
 
-
+                <script>
+                    CKEDITOR.replace( 'editor1' );
+                </script>
             </body>
         </html>
 

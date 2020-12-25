@@ -8,7 +8,7 @@ if(isset($tplData['errors'])) {
 
 ?>
 
-<div class="row mb-3 justify-content-center pt-3">
+<div class="row mb-3 justify-content-center">
     <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6 col-sm-12 col-xs-12">
         <div class="card mb-4 shadow-sm">
             <div class="card-header">
@@ -26,8 +26,8 @@ if(isset($tplData['errors'])) {
                         <label for="loginPassWord" class="form-label">Heslo</label>
                         <input type="password" class="form-control" id="loginPassWord" name="loginPassWord" placeholder="Heslo">
                     </div>
-                    <div class="form-group">
-                        <input type="submit" class="btn btn-outline-primary justify-content-end" value="Přihlášení" name="loginSubmit">
+                    <div class="form-group d-grid d-md-flex">
+                        <input type="submit" class="btn btn-outline-primary" value="Přihlášení" name="loginSubmit">
                     </div>
 
                 </div>

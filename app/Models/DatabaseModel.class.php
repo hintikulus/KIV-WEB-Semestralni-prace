@@ -2,6 +2,9 @@
 
 namespace konference\Models;
 
+use \PDO;
+use \PDOException;
+
 /**
  * Trida spravujici databazi.
  * @package kivweb\Models
@@ -86,16 +89,25 @@ class DatabaseModel {
         return $this->pdo->query($q)->fetchAll();
     }
 
-    public function loginUser(string $login, string $password):bool {
+    public function loginUser(string $login, string $password) {
         $login = htmlspecialchars($login);
 
-        $q = "SELECT password from " . TABLE_USERS . " WHERE login = :login;";
+        $q = "SELECT id_user, login, password from " . TABLE_USERS . " WHERE login = :login OR email = :email;";
         $vystup = $this->pdo->prepare($q);
         $vystup->bindParam(':login', $login);
+        $vystup->bindParam(':email', $login);
         $vystup->execute();
-        $result = $vystup->fetchAll()[0]['password'];
+        if($vystup->rowCount() == 0) {
+            return null;
+        }
 
-        return password_verify($password, $result);
+        $result = $vystup->fetchAll()[0];
+
+        if(password_verify($password, $result['password'])) {
+            return $result;
+        } else {
+            return null;
+        }
     }
 
     public function createUser(string $login, string $email, string $password, string $name, string $surname) {
@@ -137,12 +149,6 @@ class DatabaseModel {
         }
 
         return $errors;
-
-
-
-
-
-
     }
     
     /**
@@ -161,6 +167,91 @@ class DatabaseModel {
         } else {
             // je false
             return false;
+        }
+    }
+
+    public function getUserInfo(int $userId) {
+
+        $q = "SELECT * FROM " . TABLE_USERS . " WHERE id_user = :id_user";
+        $res = $this->pdo->prepare($q);
+        $res->bindParam(':id_user', $userId);
+        if($res->execute()) {
+            return $res->fetchAll()[0];
+        } else {
+            return null;
+        }
+    }
+
+    public function getUserInfoByUserName(string $username) {
+
+        $q = "SELECT * FROM " . TABLE_USERS . " WHERE login = :username";
+        $res = $this->pdo->prepare($q);
+        $res->bindParam(':username', $username);
+        if($res->execute()) {
+            return $res->fetchAll()[0];
+        } else {
+            return null;
+        }
+    }
+
+    public function changeUserPassword(int $userId, string $old_password, $new_password) {
+        $userInfo = $this->getUserInfo($userId);
+
+        if(!password_verify($old_password, $userInfo['password'])) {
+           return false;
+        }
+
+        $password = password_hash($new_password, PASSWORD_BCRYPT);
+
+        $q = "UPDATE " . TABLE_USERS . " SET password = :pass WHERE id_user = :id_user";
+        $res = $this->pdo->prepare($q);
+        $res->bindParam(":pass", $password);
+        $res->bindParam("id_user", $userId);
+        return $res->execute();
+    }
+
+    public function execute():bool {
+        if(func_num_args() == 0) {
+            return false;
+        }
+
+        $q = func_get_arg(0);
+        $res = $this->pdo->prepare($q);
+
+        $args = func_get_args();
+
+        for($i = 1; $i < func_num_args(); $i++) {
+            $res->bindParam($i, $args[$i]);
+        }
+
+        return $res->execute();
+
+
+    }
+
+    public function postArticle($author, $title, $abstract, $file) {
+        $q = "INSERT INTO " . TABLE_ARTICLES . " (id_author, title, abstract, file) VALUES (:author, :title, :abstract, :file)";
+        $res = $this->pdo->prepare($q);
+        $res->bindParam(":author", $author);
+        $res->bindParam(":title", $title);
+        $res->bindParam(":abstract", $abstract);
+        $res->bindParam(":file", $file, PDO::PARAM_LOB);
+
+        if($res->execute()) {
+        } else {
+        }
+    }
+
+    public function getArticle($articleId) {
+        $q = "SELECT title, abstract, file, time_posted, state, users.name, users.surname, users.login, octet_length(file) as size 
+            FROM " . TABLE_ARTICLES . " INNER JOIN " . TABLE_USERS . " ON users.id_user = articles.id_author 
+            where articles.id_article = :id_article";
+        $res = $this->pdo->prepare($q);
+        $res->bindParam(":id_article", $articleId);
+        if($res->execute()) {
+            return $res->fetchAll()[0];
+        } else {
+            return null;
         }
     }
 

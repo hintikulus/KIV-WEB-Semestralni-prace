@@ -27,6 +27,17 @@ const WEB_PAGES = array(
 global $tplData;
 
 ?>
+
+<form class="row">
+    <h4>Vyhledávání</h4>
+    <div class="form-group col-md-10">
+        <input type="text" class="form-control" name="uvodSearchText" id="uvodSearchText" placeholder="Vyhledávání podle názvu nebo příjmení autora">
+    </div>
+    <div class="form-group col-md-2">
+        <input type="submit" class="btn btn-outline-primary col-12" name="uvodSearchSubmit" value="Hledat">
+    </div>
+</form>
+
 <!-- ------------------------------------------------------------------------------------------------------- -->
 <div class="alert-info">TemplateBased</div>
 
@@ -36,6 +47,7 @@ global $tplData;
 
 // vypis pohadek
 $res = "";
+
 if(array_key_exists('stories', $tplData)) {
     foreach ($tplData['stories'] as $d) {
         $res .= "<h2>$d[title]</h2>";

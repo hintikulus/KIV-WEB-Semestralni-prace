@@ -32,6 +32,10 @@ class ApplicationStart {
             $pageKey = DEFAULT_WEB_PAGE_KEY; // defaulti klic
         }
         // pripravim si data ovladace
+        if(!isset(WEB_PAGES[$pageKey])) {
+            $pageKey = ERROR_404_PAGE_KEY;
+        }
+
         $pageInfo = WEB_PAGES[$pageKey];
 
         //// nacteni odpovidajiciho kontroleru, jeho zavolani a vypsani vysledku

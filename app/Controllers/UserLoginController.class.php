@@ -24,18 +24,19 @@ class UserLoginController extends PageController {
 
         if($this->login->isUserLogged()) {
             header('Location: ?page=uvod');
-            return;
+            return [];
         }
 
         if(isset($_POST['loginSubmit'])) {
             if(DatabaseModel::isset($_POST, "loginUserName", "loginPassWord")) {
-                if($this->db->loginUser($_POST['loginUserName'], $_POST['loginPassWord'])) {
-                    $username = htmlspecialchars($_POST['loginUserName']);
-                    $this->login->login($username);
-                    $tplData['logged'] = $username;
+
+                $data = $this->db->loginUser($_POST['loginUserName'], $_POST['loginPassWord']);
+
+                if($data) {
+                    $this->login->login($data['id_user'], $data['login']);
+                    $tplData['logged'] = $data['login'];
                     header('Location: ?page=uvod');
                 }
-
             }
         }
 
