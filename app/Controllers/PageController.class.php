@@ -2,6 +2,7 @@
 
 
 namespace konference\Controllers;
+use konference\Models\Alerts;
 use konference\Models\UserLoginModel;
 
 
@@ -17,6 +18,10 @@ class PageController implements IController {
         $tplData = [];
 
         $tplData['title'] = $pageTitle;
+
+        $tplData[Alerts::ALERTS_SUCCESS] = [];
+        $tplData[Alerts::ALERTS_WARNING] = [];
+        $tplData[Alerts::ALERTS_DANGER] = [];
 
         if($this->login->isUserLogged()) {
             $tplData['logged'] = $this->login->getUserName();

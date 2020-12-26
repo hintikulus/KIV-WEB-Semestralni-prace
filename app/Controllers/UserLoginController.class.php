@@ -3,6 +3,7 @@
 
 namespace konference\Controllers;
 
+use konference\Models\Alerts;
 use konference\Models\DatabaseModel;
 
 class UserLoginController extends PageController {
@@ -36,7 +37,11 @@ class UserLoginController extends PageController {
                     $this->login->login($data['id_user'], $data['login']);
                     $tplData['logged'] = $data['login'];
                     header('Location: ?page=uvod');
+                } else {
+                    $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_USER_LOGIN_INVALID_CREDENTIALS;
                 }
+            } else {
+                $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_FORM_NOT_COMPLETE;
             }
         }
 

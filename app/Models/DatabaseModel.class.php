@@ -68,9 +68,10 @@ class DatabaseModel {
      *  Vrati seznam vsech pohadek pro uvodni stranku.
      *  @return array Obsah uvodu.
      */
-    public function getAllIntroductions():array {
+    public function getAllAcceptedArticles():array {
         // pripravim dotaz
-        $q = "SELECT * FROM ".TABLE_ARTICLES;
+        $q = "SELECT id_article, title, abstract, time_posted, " . TABLE_USERS . ".name, " . TABLE_USERS . ".surname, " . TABLE_USERS . ".login FROM "
+            .TABLE_ARTICLES . " INNER JOIN " . TABLE_USERS . " ON " . TABLE_USERS . ".id_user = " . TABLE_ARTICLES . ".id_author";
         // provedu a vysledek vratim jako pole
         // protoze je o uzkazku, tak netestuju, ze bylo neco vraceno
         return $this->pdo->query($q)->fetchAll();
@@ -111,25 +112,35 @@ class DatabaseModel {
     }
 
     public function createUser(string $login, string $email, string $password, string $name, string $surname) {
+        $data = Alerts::alertArray();
+        $data[Alerts::ALERTS_WARNING] = [];
+
         $login = htmlspecialchars($login);
         $email = htmlspecialchars($email);
         $name = htmlspecialchars($name);
         $surname = htmlspecialchars($surname);
 
-        $q = "SELECT login, email from " . TABLE_USERS . " WHERE login = :login OR email = :email";
+        $q = "SELECT login, email from " . TABLE_USERS . " WHERE login = :login OR email = :email;";
         $vystup = $this->pdo->prepare($q);
         $vystup->bindParam(':login', $login);
         $vystup->bindParam(':email', $email);
         $vystup->execute();
         echo $vystup->rowCount() . $login . $email;
         if($vystup->rowCount() > 0) {
-            $result = $vystup->fetchObject();
-            var_dump($result);
+            $result = $vystup->fetch();
 
-            $errors = array();
-            echo('Uživatel s takovým emailem nebo uživ. jménem již existuje.');
+            if($result['login'] == $login) {
+                $data[Alerts::ALERTS_WARNING][] = Alerts::WARNING_USER_REG_USERNAME_EXISTS;
+                return $data;
+            }
 
-            return $errors;
+            if($result['email'] == $email) {
+                $data[Alerts::ALERTS_WARNING][] = Alerts::WARNING_USER_REG_EMAIL_EXISTS;
+                return $data;
+            }
+
+            $data[Alerts::ALERTS_DANGER][] = Alerts::DANGER_UNEXPECTED_ERROR;
+            return $data;
         }
 
         $q = "INSERT INTO " . TABLE_USERS . " (login, email, password, name, surname) 
@@ -143,12 +154,21 @@ class DatabaseModel {
         $vystup->bindParam(':surname', $surname);
 
         if($vystup->execute()) {
-            $errors['success'] = "Uživatel byl v pořádku registrován";
+            $q = "SELECT id_user as id FROM " . TABLE_USERS . " WHERE login = :login";
+            $res = $this->pdo->prepare($q);
+            $res->bindParam(":login", $login);
+            if($res->execute()) {
+                $id = $res->fetch()['id'];
+                $data['result'] = $id;
+            } else {
+                var_dump($res->errorInfo());
+                $data[Alerts::ALERTS_DANGER] = Alerts::DANGER_UNEXPECTED_ERROR;
+            }
         } else {
-            $errors['databaseProblem'] = "Vyskytl se problém se spojením s databází, registrace uživatele nebyla provedena.";
+            $data[Alerts::ALERTS_DANGER] = Alerts::DANGER_UNEXPECTED_ERROR;
         }
 
-        return $errors;
+        return $data;
     }
     
     /**
@@ -198,7 +218,7 @@ class DatabaseModel {
         $userInfo = $this->getUserInfo($userId);
 
         if(!password_verify($old_password, $userInfo['password'])) {
-           return false;
+           return 2;
         }
 
         $password = password_hash($new_password, PASSWORD_BCRYPT);

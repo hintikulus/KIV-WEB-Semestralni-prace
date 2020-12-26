@@ -4,6 +4,7 @@
 namespace konference\Controllers;
 
 
+use konference\Models\Alerts;
 use konference\Models\DatabaseModel;
 use konference\Models\Utilities;
 
@@ -33,21 +34,26 @@ class UserRegistrationController extends PageController {
         if(isset($_POST['registrationSubmit'])) {
             $errors = $this->isRegistrationDataOk($_POST);
 
-            if(isset($errors['success'])) {
+            if(empty($errors[Alerts::ALERTS_WARNING]) && empty($errors[Alerts::ALERTS_DANGER])) {
                 $password = password_hash($_POST['registrationPassWord'], PASSWORD_BCRYPT);
 
-                $errors = $this->db->createUser($_POST['registrationUserName'], $_POST['registrationEMail'],
+                $data = $this->db->createUser($_POST['registrationUserName'], $_POST['registrationEMail'],
                     $password, $_POST['registrationName'], $_POST['registrationSurName']);
 
-                if(isset($errors['success'])) {
+                Alerts::merge_alerts($tplData, $data);
+
+                var_dump($data);
+
+                if(isset($data['result'])) {
                     $username = htmlspecialchars($_POST['registrationUserName']);
-                    $this->login->login($username);
+                    $this->login->login($data['result'], $username);
                     $tplData['logged'] = $username;
                     header('Location: ?page=uvod');
                 }
             }
 
-            $tplData['errors'] = $errors;
+            Alerts::merge_alerts($tplData, $errors);
+
         }
 
         return $tplData;
@@ -55,28 +61,23 @@ class UserRegistrationController extends PageController {
     }
 
     private function isRegistrationDataOk(array $data):array {
-        $result = [];
-        $isOk = true;
+        $result = Alerts::alertArray();
 
         if(!(DatabaseModel::isset($data, 'registrationName', 'registrationSurName', 'registrationEMail', 'registrationUserName',
                 'registrationPassWord', 'registrationPassWord2') && isset($data['registrationSouhlas']))) {
 
-            $result['errors']['empty'] = "Nejsou vyplněna veškeré políčka";
+            $result[Alerts::ALERTS_WARNING][] = Alerts::WARNING_FORM_NOT_COMPLETE;
             return $result;
         }
 
         if($data['registrationPassWord'] != $data['registrationPassWord2']) {
-            $result['errors']['passWordEqual'] == "Hesla se neshodují";
-            $isOk = false;
+            $result[Alerts::ALERTS_WARNING][] = Alerts::WARNING_USER_REG_PASS_NOT_MATCH;
+            return $result;
         }
 
-        if(Utilities::passWordValidation($data['registrationPassWord'])) {
-            $result['errors']['passWordStrength'] == "Heslo není dostatečně silné";
-            $isOk = false;
-        }
-
-        if($isOk) {
-            $result['success'] = "Registrace je v pořádku";
+        if(!Utilities::passWordValidation($data['registrationPassWord'])) {
+            $result[Alerts::ALERTS_WARNING][] = Alerts::WARNING_USER_REG_PASS_VALIDATION;
+            return $result;
         }
 
         return $result;

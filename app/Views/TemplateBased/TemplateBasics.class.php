@@ -2,6 +2,7 @@
 
 namespace konference\Views\TemplateBased;
 
+use konference\Models\Alerts;
 use konference\Views\IView;
 
 /**
@@ -118,6 +119,10 @@ class TemplateBasics implements IView {
                 </header>
                 <main class="container pt-4">
         <?php
+        $this->printAlerts("success", Alerts::ALERT_SUCCESS, $tplData);
+        $this->printAlerts("danger", Alerts::ALERT_DANGER, $tplData);
+        $this->printAlerts('warning', Alerts::ALERT_WARNING, $tplData);
+
     }
     
     /**
@@ -142,7 +147,19 @@ class TemplateBasics implements IView {
 
         <?php
     }
-        
+
+    public function printAlerts($alertType, $alertTypeStr, $tplData) {
+        if(isset($tplData[$alertType])) {
+            foreach($tplData[$alertType] as $alert) {
+                echo '
+                <div class="alert alert-' . $alertType . ' alert-dismissible fade show" role="alert">
+                    <strong>' . $alertTypeStr . '</strong> ' . $alert . '
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavřít"></button>
+                </div>';
+            }
+        }
+    }
 }
+
 
 ?>

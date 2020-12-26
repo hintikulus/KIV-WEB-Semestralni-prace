@@ -39,7 +39,7 @@ class IntroductionController extends PageController {
         //// vsechna data sablony budou globalni
         ///
         // data pohadek
-        $tplData['stories'] = $this->db->getAllIntroductions();
+        $tplData['articles'] = $this->db->getAllAcceptedArticles();
 
         // vratim sablonu naplnenou daty
         return $tplData;

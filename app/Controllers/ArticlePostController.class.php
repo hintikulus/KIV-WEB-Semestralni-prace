@@ -3,6 +3,7 @@
 
 namespace konference\Controllers;
 
+use konference\Models\Alerts;
 use konference\Models\DatabaseModel;
 use konference\Models\Utilities;
 
@@ -26,28 +27,32 @@ class ArticlePostController extends PageController {
         echo "zaciname testovat \n";
 
         if(isset($_POST['articlePostSubmit'])) {
-            echo "tlacitko bylo stisknuto\n";
             if(isset($_POST['articlePostTitle']) && !empty($_POST['articlePostTitle']
                     && isset($_POST['articlePostAbstract']) && !empty($_POST['articlePostAbstract']))) {
-                echo "vse vyplneno\n";
+
                 if(!empty($_FILES['articlePostFile']['name'])) {
-                    echo "dokonce i soubor \n";
                     if($_FILES['articlePostFile']['error'] != 0) {
-                        echo "nějaká chyba v errorech";
+                        $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_ARTICLE_POST_FILE_ERROR;
+                        $tplData[Alerts::ALERTS_DANGER][] = Alerts::DANGER_ARTICLE_POST_NOT_PUBLISHED;
+                    } else if($_FILES['articlePostFile']['type'] != "application/pdf") {
+                        $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_ARTICLE_POST_BAD_FILE_TYPE;
+                        $tplData[Alerts::ALERTS_DANGER][] = Alerts::DANGER_ARTICLE_POST_NOT_PUBLISHED;
                     } else {
                         $title = htmlspecialchars($_POST['articlePostTitle']);
                         $abstract = $_POST['articlePostAbstract'];
 
-                        $fileName = $_FILES['articlePostFile']['name'];
                         $file_tmp = $_FILES['articlePostFile']['tmp_name'];
-                        echo "jdeme na to!";
                         if($pdf_blob = fopen($file_tmp, "rb")) {
-                            echo "zapisuju";
                             $this->db->postArticle($this->login->getUserId(), $title, $abstract, $pdf_blob);
                         }
                     }
-
+                } else {
+                    $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_ARTICLE_POST_NO_FILE;
+                    $tplData[Alerts::ALERTS_DANGER][] = Alerts::DANGER_ARTICLE_POST_NOT_PUBLISHED;
                 }
+            } else {
+                $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_FORM_NOT_COMPLETE;
+                $tplData[Alerts::ALERTS_DANGER][] = Alerts::DANGER_ARTICLE_POST_NOT_PUBLISHED;
             }
         }
 

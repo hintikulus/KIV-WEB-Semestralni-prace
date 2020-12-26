@@ -48,11 +48,11 @@ global $tplData;
 // vypis pohadek
 $res = "";
 
-if(array_key_exists('stories', $tplData)) {
-    foreach ($tplData['stories'] as $d) {
-        $res .= "<h2>$d[title]</h2>";
-        $res .= "<b>Autor:</b> $d[author] (" . date("d. m. Y, H:i.s", strtotime($d['date'])) . ")<br><br>";
-        $res .= "<div style='text-align:justify;'><b>Úryvek:</b> $d[text]</div><hr>";
+if(array_key_exists('articles', $tplData)) {
+    foreach ($tplData['articles'] as $d) {
+        $res .= "<a href='?page=article&article=$d[id_article]'><h2>$d[title]</h2></a>";
+        $res .= "<b>Autor:</b> <a href='?page=profile&user=$d[login]'>$d[name] $d[surname]</a> (" . date("d. m. Y, H:i.s", strtotime($d['time_posted'])) . ")<br><br>";
+        $res .= "<div style='text-align:justify;'><b>Úryvek:</b> $d[abstract]</div><hr>";
     }
 } else {
     $res .= "Pohádky nenalezeny";
