@@ -36,6 +36,7 @@ spl_autoload_register(function ($className){
 
     // pripojim soubor s pozadovanou tridou
     //echo "Ze souboru: $fileName <br>";
+
     require_once($fileName);
 });
 

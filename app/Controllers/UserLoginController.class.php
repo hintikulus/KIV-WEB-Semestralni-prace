@@ -5,14 +5,12 @@ namespace konference\Controllers;
 
 use konference\Models\Alerts;
 use konference\Models\DatabaseModel;
+use konference\Models\Utilities;
 
 class UserLoginController extends PageController {
 
-    private $db;
-
     public function __construct() {
         parent::__construct();
-        $this->db = DatabaseModel::getDatabaseModel();
     }
 
     public function show(string $pageTitle): array {
@@ -20,11 +18,11 @@ class UserLoginController extends PageController {
 
         if(isset($_GET['action']) && $_GET['action'] == 'logout') {
             $this->login->logout();
-            header('Location: ?page=uvod');
+            Utilities::redirect();
         }
 
         if($this->login->isUserLogged()) {
-            header('Location: ?page=uvod');
+            Utilities::redirect();
             return [];
         }
 
@@ -36,7 +34,7 @@ class UserLoginController extends PageController {
                 if($data) {
                     $this->login->login($data['id_user'], $data['login']);
                     $tplData['logged'] = $data['login'];
-                    header('Location: ?page=uvod');
+                    Utilities::redirect();
                 } else {
                     $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_USER_LOGIN_INVALID_CREDENTIALS;
                 }

@@ -9,11 +9,9 @@ use konference\Models\Utilities;
 
 class UserEditController extends PageController {
 
-    private $db;
 
     public function __construct() {
         parent::__construct();
-        $this->db = DatabaseModel::getDatabaseModel();
     }
 
     public function show(string $pageTitle): array {
@@ -42,7 +40,7 @@ class UserEditController extends PageController {
         if(isset($_POST['userEditBioSubmit'])) {
             $bio = "";
             if(isset($_POST['userEditBio'])) {
-                $bio = $_POST['userEditBio'];
+                $bio = htmlspecialchars($_POST['userEditBio'], ENT_QUOTES,'UTF-8',false);;
             }
 
 

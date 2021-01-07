@@ -9,11 +9,8 @@ use konference\Models\Utilities;
 
 class ArticlePostController extends PageController {
 
-    private $db;
-
     public function __construct() {
         parent::__construct();
-        $this->db = DatabaseModel::getDatabaseModel();
     }
 
     public function show(string $pageTitle): array {
@@ -21,10 +18,8 @@ class ArticlePostController extends PageController {
 
         if(!$this->login->isUserLogged()) {
             header('Location: ?page=login');
-            return [];
+            return $tplData;
         }
-
-        echo "zaciname testovat \n";
 
         if(isset($_POST['articlePostSubmit'])) {
             if(isset($_POST['articlePostTitle']) && !empty($_POST['articlePostTitle']
@@ -43,7 +38,10 @@ class ArticlePostController extends PageController {
 
                         $file_tmp = $_FILES['articlePostFile']['tmp_name'];
                         if($pdf_blob = fopen($file_tmp, "rb")) {
-                            $this->db->postArticle($this->login->getUserId(), $title, $abstract, $pdf_blob);
+                            if(($id = $this->db->postArticle($this->login->getUserId(), $title, $abstract, $pdf_blob)) > 0) {
+                                Utilities::redirect("article&article=" . $id);
+                                return $tplData;
+                            }
                         }
                     }
                 } else {

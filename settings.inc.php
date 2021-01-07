@@ -14,7 +14,6 @@ define("DB_USER","web");
 /** Heslo uzivatele databaze */
 define("DB_PASS","kivwebheslo");
 
-
 //// Nazvy tabulek v DB ////
 
 /** Tabulka s pohadkami. */
@@ -24,9 +23,17 @@ define("TABLE_ROLES", "roles");
 
 define("TABLE_ARTICLES", "articles");
 
+define("TABLE_REVIEWS", "reviews");
+
 //// Informace o webu ////
 define("WEB_TITLE", "Konference TechMasters");
 
+define("RECAPTCHA_SECRET", "6Ld7FxcaAAAAACK5_5dMQpRoB16DL-qfD6HVkO_Q");
+
+/// Nastvení systému ///
+define("NUMBER_OF_REVIEWS_TO_VERDICT", 3);
+
+define("RECAPTCHA_VALIDATION", true);
 
 //// Dostupne stranky webu ////
 
@@ -54,49 +61,73 @@ const WEB_PAGES = array(//// Uvodni stranka ////
         // ClassBased sablona
         //"view_class_name" => \konference\Views\ClassBased\IntroductionTemplate::class,
 
-        // TemplateBased sablona
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_INTRODUCTION,
+        // TemplatePlain sablona
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_INTRODUCTION,
     ),
     //// KONEC: Uvodni stranka ////
 
     //// Sprava uzivatelu ////
-    "sprava" => array(
+    "admin-user" => array(
         "title" => "Správa uživatelů",
 
         //// kontroler
         "controller_class_name" => \konference\Controllers\AdminUserManagementController::class,
 
-        // TemplateBased sablona
+        // TemplatePlain sablona
         "view_class_name" => \konference\Views\TemplateAdministration\TemplateAdministration::class,
         "template_type" => \konference\Views\TemplateAdministration\TemplateAdministration::PAGE_ADMIN_USER_MANAGEMENT,
+    ),
+
+    "admin-reviews" => array(
+        "title" => "Správa recenzí",
+        "controller_class_name" => \konference\Controllers\AdminArticleReviewAssignController::class,
+        "view_class_name" => \konference\Views\TemplateAdministration\TemplateAdministration::class,
+        "template_type" => \konference\Views\TemplateAdministration\TemplateAdministration::PAGE_ADMIN_REVIEW_MANAGEMENT,
+    ),
+
+    "articles-to-review" => array(
+        "title" => "Články k recenzování",
+        "controller_class_name" => \konference\Controllers\ReviewerArticlesToReviewController::class,
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_REVIEWER_ARTICLES_TO_REVIEW,
     ),
     //// KONEC: Sprava uzivatelu ////
 
     "information" => array(
         "title" => "Informace",
         "controller_class_name" => \konference\Controllers\PageController::class,
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_INFORMATION,
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_INFORMATION,
     ),
 
-    "administrace" => array(
-        "title" => "Administrace",
+    "admin-verdict" => array(
+        "title" => "Schvalování příspěvků",
+        "controller_class_name" => \konference\Controllers\AdminArticleVerdictController::class,
+        "view_class_name" => \konference\Views\TemplateAdministration\TemplateAdministration::class,
+        "template_type" => \konference\Views\TemplateAdministration\TemplateAdministration::PAGE_ADMIN_ARTICLE_VERDICT,
+    ),
+
+    "admin-articles" => array(
+        "title" => "Správa příspěvků",
+        "controller_class_name" => \konference\Controllers\AdminArticleManagementController::class,
+        "view_class_name" => \konference\Views\TemplateAdministration\TemplateAdministration::class,
+        "template_type" => \konference\Views\TemplateAdministration\TemplateAdministration::PAGE_ADMIN_ARTICLE_MANAGEMENT,
     ),
 
     "post" => array(
         "title" => "Publikování článku",
         "controller_class_name" => \konference\Controllers\ArticlePostController::class,
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_ARTICLE_POST,
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_ARTICLE_POST,
 
     ),
 
     "article" => array(
         "title" => "Zobrazení článku",
         "controller_class_name" => \konference\Controllers\ArticleShowController::class,
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_ARTICLE_SHOW,
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_ARTICLE_SHOW,
     ),
 
     "articlecreate" => array(
@@ -107,37 +138,44 @@ const WEB_PAGES = array(//// Uvodni stranka ////
     "registration" => array(
         "title" => "Registrace nového uživatele",
         "controller_class_name" => \konference\Controllers\UserRegistrationController::class,
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_REGISTRATION,
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_USER_REGISTRATION,
 
     ),
 
     "login" => array(
         "title" => "Přihlášení uživatele",
         "controller_class_name" => \konference\Controllers\UserLoginController::class,
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_LOGIN,
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_USER_LOGIN,
     ),
 
     "useredit" => array(
         "title" => "Úprava profilu",
         "controller_class_name" => \konference\Controllers\UserEditController::class,
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_EDIT,
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_USER_EDIT,
     ),
 
     "profile" => array(
         "title" => "Profil uživatele",
         "controller_class_name" => \konference\Controllers\UserProfileController::class,
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_USER_PROFILE,
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_USER_PROFILE,
+    ),
+
+    "user-articles" => array(
+        "title" => "Články uživatele",
+        "controller_class_name" => \konference\Controllers\UserArticlesController::class,
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_USER_ARTICLES,
     ),
 
     "404" => array(
         "title" => "Error 404",
         "controller_class_name" => \konference\Controllers\PageController::class,
-        "view_class_name" => \konference\Views\TemplateBased\TemplateBasics::class,
-        "template_type" => \konference\Views\TemplateBased\TemplateBasics::PAGE_ERROR_404
+        "view_class_name" => \konference\Views\TemplatePlain\TemplatePlain::class,
+        "template_type" => \konference\Views\TemplatePlain\TemplatePlain::PAGE_ERROR_404
     )
 
 

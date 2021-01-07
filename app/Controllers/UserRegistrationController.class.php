@@ -10,17 +10,11 @@ use konference\Models\Utilities;
 
 class UserRegistrationController extends PageController {
 
-    /** @var DatabaseModel $db  Sprava databaze. */
-    private $db;
-
     /**
      * Inicializace pripojeni k databazi.
      */
     public function __construct() {
         parent::__construct();
-        // inicializace prace s DB
-        //require_once (DIRECTORY_MODELS ."/DatabaseModel.class.php");
-        $this->db = DatabaseModel::getDatabaseModel();
     }
 
     public function show(string $pageTitle): array {
@@ -32,28 +26,40 @@ class UserRegistrationController extends PageController {
         }
 
         if(isset($_POST['registrationSubmit'])) {
-            $errors = $this->isRegistrationDataOk($_POST);
 
-            if(empty($errors[Alerts::ALERTS_WARNING]) && empty($errors[Alerts::ALERTS_DANGER])) {
-                $password = password_hash($_POST['registrationPassWord'], PASSWORD_BCRYPT);
+            if(!isset($_POST['g-recaptcha-response']) && RECAPTCHA_VALIDATION) {
+                $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_RECAPTCHA;
+            } else {
 
-                $data = $this->db->createUser($_POST['registrationUserName'], $_POST['registrationEMail'],
-                    $password, $_POST['registrationName'], $_POST['registrationSurName']);
+                $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".
+                    RECAPTCHA_SECRET ."&response=".$_POST['g-recaptcha-response']."&remoteip=".$_SERVER['REMOTE_ADDR']);
+                $googleobj = json_decode($response);
+                $verified = $googleobj->success;
+                if($verified === false && RECAPTCHA_VALIDATION) {
+                    $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_RECAPTCHA;
+                } else {
 
-                Alerts::merge_alerts($tplData, $data);
+                    $errors = $this->isRegistrationDataOk($_POST);
 
-                var_dump($data);
+                    if (empty($errors[Alerts::ALERTS_WARNING]) && empty($errors[Alerts::ALERTS_DANGER])) {
+                        $password = password_hash($_POST['registrationPassWord'], PASSWORD_BCRYPT);
 
-                if(isset($data['result'])) {
-                    $username = htmlspecialchars($_POST['registrationUserName']);
-                    $this->login->login($data['result'], $username);
-                    $tplData['logged'] = $username;
-                    header('Location: ?page=uvod');
+                        $data = $this->db->createUser($_POST['registrationUserName'], $_POST['registrationEMail'],
+                            $password, $_POST['registrationName'], $_POST['registrationSurName']);
+
+                        Alerts::merge_alerts($tplData, $data);
+
+                        if (isset($data['result'])) {
+                            $username = htmlspecialchars($_POST['registrationUserName']);
+                            $this->login->login($data['result'], $username);
+                            $tplData['logged'] = $username;
+                            header('Location: ?page=uvod');
+                        }
+                    }
+
+                    Alerts::merge_alerts($tplData, $errors);
                 }
             }
-
-            Alerts::merge_alerts($tplData, $errors);
-
         }
 
         return $tplData;

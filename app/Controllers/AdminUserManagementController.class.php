@@ -3,7 +3,9 @@
 namespace konference\Controllers;
 
 // ukazka aliasu
+use konference\Models\Alerts;
 use konference\Models\DatabaseModel as MyDB;
+use konference\Models\Roles;
 
 // nactu rozhrani kontroleru
 //require_once(DIRECTORY_CONTROLLERS."/IController.interface.php");
@@ -16,16 +18,12 @@ use konference\Models\DatabaseModel as MyDB;
 class AdminUserManagementController extends PageController {
 
     /** @var MyDB $db  Sprava databaze. */
-    private $db;
 
     /**
      * Inicializace pripojeni k databazi.
      */
     public function __construct() {
         parent::__construct();
-        // inicializace prace s DB
-        //require_once (DIRECTORY_MODELS ."/DatabaseModel.class.php");
-        $this->db = MyDB::getDatabaseModel();
     }
 
     /**
@@ -36,21 +34,58 @@ class AdminUserManagementController extends PageController {
     public function show(string $pageTitle):array {
         $tplData = parent::show($pageTitle);
 
+        if(!$this->login->isUserLogged()) {
+            header("?page=404");
+            return $tplData;
+        }
+
+        if($tplData['userInfo']['id_role'] != Roles::ROLE_ADMINISTRATOR) {
+            header('Location: ?page=404');
+            return $tplData;
+        }
+
         //// neprisel pozadavek na smazani uzivatele?
-        if(isset($_POST['action']) and $_POST['action'] == "delete"
-            and isset($_POST['id_user'])
-        ){
-            // provedu smazani uzivatele
-            $ok = $this->db->deleteUser(intval($_POST['id_user']));
-            if($ok){
-                $tplData['delete'] = "OK: Uživatel s ID:$_POST[id_user] byl smazán z databáze.";
-            } else {
-                $tplData['delete'] = "CHYBA: Uživatele s ID:$_POST[id_user] se nepodařilo smazat z databáze.";
+        if(isset($_POST['action']) and isset($_POST['id_user'])) {
+            if($_POST['action'] == "delete") {
+                // provedu smazani uzivatele
+                $ok = $this->db->deleteUser(intval($_POST['id_user']));
+                if($ok){
+                    $tplData[Alerts::ALERTS_SUCCESS][] = Alerts::SUCCESS_ADMIN_USER_DELETED;
+                } else {
+                    $tplData[Alerts::ALERTS_WARNING][] = Alerts::WARNING_ADMIN_USER_NOT_DELETED;
+                }
+            }
+            if($_POST['action'] == "roleSet") {
+                if(isset($_POST['adminUserManagementRole'])) {
+                    $ok = $this->db->setRole(intval($_POST['id_user']), intval($_POST['adminUserManagementRole']));
+                    if($ok) {
+                        $tplData[Alerts::ALERTS_SUCCESS][] = Alerts::SUCCESS_ADMIN_USER_ROLE_SET;
+                    } else {
+                        $tplData[Alerts::ALERTS_DANGER][] = Alerts::DANGER_UNEXPECTED_ERROR;
+                    }
+                }
             }
         }
 
+        $upp = 10;
+
+        if(isset($_GET['p'])) {
+            $tplData['page'] = htmlspecialchars($_GET['p']);
+        } else {
+            $tplData['page'] = 1;
+        }
+
+        $usersNumber = $this->db->getNumberOfUsers();
+
+        $tplData['pages'] = ceil($usersNumber/$upp);
+        if($tplData['pages'] < $tplData['page']) {
+            $tplData['page'] = $tplData['pages'];
+        }
+        if($tplData['page'] < 1) {
+            $tplData['page'] = 1;
+        }
         //// nactu aktualni data uzivatelu
-        $tplData['users'] = $this->db->getAllUsers();
+        $tplData['users'] = $this->db->getAllUsers($tplData['page'], $upp);
 
         // vratim sablonu naplnenou daty
         return $tplData;

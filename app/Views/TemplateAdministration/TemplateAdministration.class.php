@@ -3,15 +3,18 @@
 namespace konference\Views\TemplateAdministration;
 
 use konference\Views\IView;
-use konference\Views\TemplateBased\TemplateBasics;
+use konference\Views\TemplatePlain\TemplatePlain;
 
 /**
- * Trida vypisujici HTML hlavicku a paticku stranky.
- * @package kivweb\Views\TemplateBased
+ * Třída vypisující HTML hlavišku a patičku stránky.
+ * @package kivweb\Views\TemplatePlain
  */
-class TemplateAdministration extends TemplateBasics implements IView {
+class TemplateAdministration extends TemplatePlain implements IView {
 
     const PAGE_ADMIN_USER_MANAGEMENT = "AdminUserManagementTemplate.tpl.php";
+    const PAGE_ADMIN_REVIEW_MANAGEMENT = "AdminArticleReviewAssignTemplate.tpl.php";
+    const PAGE_ADMIN_ARTICLE_MANAGEMENT = "AdminArticleManagementTemplate.tpl.php";
+    const PAGE_ADMIN_ARTICLE_VERDICT = "AdminArticleVerdictTemplate.tpl.php";
 
     /**
      * Zajisti vypsani HTML sablony prislusne stranky.
@@ -36,7 +39,8 @@ class TemplateAdministration extends TemplateBasics implements IView {
 
 
     /**
-     *  Vrati vrsek stranky az po oblast, ve ktere se vypisuje obsah stranky.
+     * Vrátí vrchní část stránky (hlavičku) až po oblast vypisovanou aplikací.
+     * Vypisovaná část obsahuje definici a hlavičku HTML souboru a navigaci.
      *  @param string $pageTitle    Nazev stranky.
      */
     public function getHTMLHeader(array $tplData) {
@@ -47,36 +51,35 @@ class TemplateAdministration extends TemplateBasics implements IView {
                     <h4 class="h4">Administrace</h4>
                     <nav class="">
                         <ul class="nav nav-pills flex-column">
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Vytvořit příspěvek</a>
-                            </li>
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Seznam mých článků</a>
-                            </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Články ke schválení</a>
+                                <a class="nav-link" href="?page=admin-user">Správa uživatelů</a>
                             </li>
-
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Správa uživatelů</a>
+                                <a class="nav-link" href="?page=admin-articles">Správa článků</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="?page=admin-reviews">Články pro přiřazení recenzentů</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="?page=admin-verdict">Orecenzované články</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
                 <div class="col-md-9 col-lg-10">
-                    <h5 class="h5"><?= $tplData['title']; ?></h5>
+                    <h3 class="h3"><?= $tplData['title']; ?></h3>
         <?php
     }
 
     /**
-     *  Vrati paticku stranky.
+     *  Vrátí patičku stránky
      */
     public function getHTMLFooter(){
         ?>
 
+                </div>
             </div>
-        </div>
         <?php
         parent::getHTMLFooter();
         ?>

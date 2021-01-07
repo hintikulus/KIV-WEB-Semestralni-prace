@@ -52,7 +52,7 @@ class ApplicationStart {
         /** @var IView $view  Sablona prislusne stranky. */
         $view = new $pageInfo["view_class_name"];
         // zavolam sablonu, ktera primo vypise svuj vystup
-        // druhy parametr je pro TemplateBased sablony
+        // druhy parametr je pro TemplatePlain sablony
         $view->printOutput($tplData, $pageInfo["template_type"]);
 
     }
